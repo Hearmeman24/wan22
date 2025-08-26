@@ -3,3 +3,4 @@
 4xLSDIR.pth
 sage*
 film_net_fp32.pt
+*.safetensors
