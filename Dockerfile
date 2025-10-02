@@ -18,7 +18,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         python3.12 python3.12-venv python3.12-dev \
         python3-pip \
         curl wget ffmpeg ninja-build git git-lfs aria2 vim \
-        libgl1 libglib2.0-0 build-essential gcc && \
+        libgl1 libglib2.0-0 build-essential gcc \
+        libopenblas-dev liblapack-dev && \
     ln -sf /usr/bin/python3.12 /usr/bin/python && \
     ln -sf /usr/bin/pip3 /usr/bin/pip && \
     python3.12 -m venv /opt/venv && \
@@ -51,7 +52,7 @@ RUN cd /ComfyUI && \
 # ------------------------------------------------------------
 # ------------------------------------------------------------
 # Final stage
-# ------------------------------------------------------------
+# ------------------------------------------------------------å
 FROM base AS final
 ENV PATH="/opt/venv/bin:$PATH"
 ARG CIVITAI_TOKEN
@@ -83,6 +84,9 @@ RUN aria2c -x 16 -s 16 -k 1M -d /models/vae -o wan_2.1_vae.safetensors \
 RUN aria2c -x 16 -s 16 -k 1M -d /models/clip_vision -o clip_vision_h.safetensors \
     https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors
 
+RUN aria2c -x 16 -s 16 -k 1M -d /models/upscale_models -o 2xLiveActionV1_SPAN_490000.pth \
+    https://raw.githubusercontent.com/jcj83429/upscaling/f73a3a02874360ec6ced18f8bdd8e43b5d7bba57/2xLiveActionV1_SPAN/2xLiveActionV1_SPAN_490000.pth
+
 
 RUN pip install opencv-python
 
@@ -109,6 +113,7 @@ RUN for repo in \
     https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git \
     https://github.com/cubiq/ComfyUI_essentials.git \
     https://github.com/kijai/ComfyUI-WanVideoWrapper.git \
+    https://github.com/stduhpf/ComfyUI-WanMoeKSampler.git \
     https://github.com/g0kuvonlange/ComfyUI-Load-From-URL \
     https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git \
     https://github.com/chrisgoringe/cg-use-everywhere.git \
