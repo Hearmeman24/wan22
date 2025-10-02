@@ -61,30 +61,32 @@ ENV CIVITAI_TOKEN=${CIVITAI_TOKEN}
 RUN mkdir -p /models/diffusion_models /models/text_encoders /models/vae /models/clip_vision
 
 # Split diffusion model downloads to avoid 50GB+ layers
-RUN aria2c -x 16 -s 16 -k 1M -d /models/diffusion_models -o wan2.2_t2v_high_noise_14B_fp16.safetensors \
+RUN aria2c -x 16 -s 16 -k 1M --retry-wait=3 --max-tries=5 --timeout=60 -d /models/diffusion_models -o wan2.2_t2v_high_noise_14B_fp16.safetensors \
     https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_t2v_high_noise_14B_fp16.safetensors
-RUN aria2c -x 16 -s 16 -k 1M -d /models/diffusion_models -o wan2.2_t2v_low_noise_14B_fp16.safetensors \
+RUN aria2c -x 16 -s 16 -k 1M --retry-wait=3 --max-tries=5 --timeout=60 -d /models/diffusion_models -o wan2.2_t2v_low_noise_14B_fp16.safetensors \
     https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_t2v_low_noise_14B_fp16.safetensors
-RUN aria2c -x 16 -s 16 -k 1M -d /models/diffusion_models -o wan2.2_i2v_high_noise_14B_fp16.safetensors \
+RUN aria2c -x 16 -s 16 -k 1M --retry-wait=3 --max-tries=5 --timeout=60 -d /models/diffusion_models -o wan2.2_i2v_high_noise_14B_fp16.safetensors \
     https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_i2v_high_noise_14B_fp16.safetensors
-RUN aria2c -x 16 -s 16 -k 1M -d /models/diffusion_models -o wan2.2_i2v_low_noise_14B_fp16.safetensors \
+RUN aria2c -x 16 -s 16 -k 1M --retry-wait=3 --max-tries=5 --timeout=60 -d /models/diffusion_models -o wan2.2_i2v_low_noise_14B_fp16.safetensors \
     https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_i2v_low_noise_14B_fp16.safetensors
 
 # Split text encoders
-RUN aria2c -x 16 -s 16 -k 1M -d /models/text_encoders -o umt5_xxl_fp8_e4m3fn_scaled.safetensors \
+RUN aria2c -x 16 -s 16 -k 1M --retry-wait=3 --max-tries=5 --timeout=60 -d /models/text_encoders -o umt5_xxl_fp8_e4m3fn_scaled.safetensors \
     https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors
 
 # Split VAE downloads
-RUN aria2c -x 16 -s 16 -k 1M -d /models/vae -o Wan2_1_VAE_bf16.safetensors \
+RUN aria2c -x 16 -s 16 -k 1M --retry-wait=3 --max-tries=5 --timeout=60 -d /models/vae -o Wan2_1_VAE_bf16.safetensors \
     https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_1_VAE_bf16.safetensors
-RUN aria2c -x 16 -s 16 -k 1M -d /models/vae -o wan_2.1_vae.safetensors \
+RUN aria2c -x 16 -s 16 -k 1M --retry-wait=3 --max-tries=5 --timeout=60 -d /models/vae -o wan_2.1_vae.safetensors \
     https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors
 
-# Clip vision
-RUN aria2c -x 16 -s 16 -k 1M -d /models/clip_vision -o clip_vision_h.safetensors \
+# Clip vision with retry and fallback
+RUN aria2c -x 16 -s 16 -k 1M --retry-wait=3 --max-tries=5 --timeout=60 -d /models/clip_vision -o clip_vision_h.safetensors \
+    https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors \
+    || wget -O /models/clip_vision/clip_vision_h.safetensors \
     https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors
 
-RUN aria2c -x 16 -s 16 -k 1M -d /models/upscale_models -o 2xLiveActionV1_SPAN_490000.pth \
+RUN aria2c -x 16 -s 16 -k 1M --retry-wait=3 --max-tries=5 --timeout=60 -d /models/upscale_models -o 2xLiveActionV1_SPAN_490000.pth \
     https://raw.githubusercontent.com/jcj83429/upscaling/f73a3a02874360ec6ced18f8bdd8e43b5d7bba57/2xLiveActionV1_SPAN/2xLiveActionV1_SPAN_490000.pth
 
 
@@ -142,7 +144,7 @@ RUN pip install --no-cache-dir discord.py==2.5.2 \
 
 RUN mkdir -p /ComfyUI/custom_nodes/ComfyUI-Frame-Interpolation/ckpts/film/
 
-RUN aria2c -x 16 -s 16 -k 1M -d /ComfyUI/custom_nodes/ComfyUI-Frame-Interpolation/ckpts/film/ -o film_net_fp32.pt \
+RUN aria2c -x 16 -s 16 -k 1M --retry-wait=3 --max-tries=5 --timeout=60 -d /ComfyUI/custom_nodes/ComfyUI-Frame-Interpolation/ckpts/film/ -o film_net_fp32.pt \
     https://d1s3da0dcaf6kx.cloudfront.net/film_net_fp32.pt
 
 # Entrypointtt
