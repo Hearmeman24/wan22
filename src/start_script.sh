@@ -9,8 +9,8 @@ if [ -d "wan22" ]; then
   rm -rf wan22
 fi
 
-echo "📥 Cloning branch '$BRANCH' of Wan22…"
-git clone --branch "$BRANCH" https://github.com/Hearmeman24/wan22.git
+echo "📥 Cloning branch '$BRANCH' of Wan22 using GitHub PAT…"
+git clone --branch "$BRANCH" https://${GITHUB_PAT}@github.com/Hearmeman24/wan22.git
 
 echo "📂 Moving start.sh into place…"
 mv wan22/src/start.sh /
